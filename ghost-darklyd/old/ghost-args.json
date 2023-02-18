@@ -1,0 +1,548 @@
+[
+  {
+    "kind": "String",
+    "flagKind": "string",
+    "key": "host",
+    "defaultValue": "127.0.0.1",
+    "description": "MySQL hostname (preferably a replica, not the master)"
+  },
+  {
+    "kind": "String",
+    "flagKind": "string",
+    "key": "assume-master-host",
+    "defaultValue": "",
+    "description": "(optional) explicitly tell gh-ost the identity of the master. Format: some.host.com[:port] This is useful in master-master setups where you wish to pick an explicit master, or in a tungsten-replicator where gh-ost is unable to determine the master"
+  },
+  {
+    "kind": "Int",
+    "flagKind": "number",
+    "key": "port",
+    "defaultValue": 3306,
+    "description": "MySQL port (preferably a replica, not the master)"
+  },
+  {
+    "kind": "Float64",
+    "flagKind": "number",
+    "key": "mysql-timeout",
+    "defaultValue": 0,
+    "description": "Connect, read and write timeout for MySQL"
+  },
+  {
+    "kind": "String",
+    "flagKind": "string",
+    "key": "user",
+    "defaultValue": "",
+    "description": "MySQL user"
+  },
+  {
+    "kind": "String",
+    "flagKind": "string",
+    "key": "password",
+    "defaultValue": "",
+    "description": "MySQL password"
+  },
+  {
+    "kind": "String",
+    "flagKind": "string",
+    "key": "master-user",
+    "defaultValue": "",
+    "description": "MySQL user on master, if different from that on replica. Requires --assume-master-host"
+  },
+  {
+    "kind": "String",
+    "flagKind": "string",
+    "key": "master-password",
+    "defaultValue": "",
+    "description": "MySQL password on master, if different from that on replica. Requires --assume-master-host"
+  },
+  {
+    "kind": "String",
+    "flagKind": "string",
+    "key": "conf",
+    "defaultValue": "",
+    "description": "Config file"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "ask-pass",
+    "defaultValue": false,
+    "description": "prompt for MySQL password"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "ssl",
+    "defaultValue": false,
+    "description": "Enable SSL encrypted connections to MySQL hosts"
+  },
+  {
+    "kind": "String",
+    "flagKind": "string",
+    "key": "ssl-ca",
+    "defaultValue": "",
+    "description": "CA certificate in PEM format for TLS connections to MySQL hosts. Requires --ssl"
+  },
+  {
+    "kind": "String",
+    "flagKind": "string",
+    "key": "ssl-cert",
+    "defaultValue": "",
+    "description": "Certificate in PEM format for TLS connections to MySQL hosts. Requires --ssl"
+  },
+  {
+    "kind": "String",
+    "flagKind": "string",
+    "key": "ssl-key",
+    "defaultValue": "",
+    "description": "Key in PEM format for TLS connections to MySQL hosts. Requires --ssl"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "ssl-allow-insecure",
+    "defaultValue": false,
+    "description": "Skips verification of MySQL hosts' certificate chain and host name. Requires --ssl"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "exact-rowcount",
+    "defaultValue": false,
+    "description": "actually count table rows as opposed to estimate them (results in more accurate progress estimation)"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "concurrent-rowcount",
+    "defaultValue": true,
+    "description": "(with --exact-rowcount), when true (default): count rows after row-copy begins, concurrently, and adjust row estimate later on; when false: first count rows, then start row copy"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "allow-on-master",
+    "defaultValue": false,
+    "description": "allow this migration to run directly on master. Preferably it would run on a replica"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "allow-master-master",
+    "defaultValue": false,
+    "description": "explicitly allow running in a master-master setup"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "allow-nullable-unique-key",
+    "defaultValue": false,
+    "description": "allow gh-ost to migrate based on a unique key with nullable columns. As long as no NULL values exist, this should be OK. If NULL values exist in chosen key, data may be corrupted. Use at your own risk!"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "approve-renamed-columns",
+    "defaultValue": false,
+    "description": "in case your `ALTER` statement renames columns, gh-ost will note that and offer its interpretation of the rename. By default gh-ost does not proceed to execute. This flag approves that gh-ost's interpretation is correct"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "skip-renamed-columns",
+    "defaultValue": false,
+    "description": "in case your `ALTER` statement renames columns, gh-ost will note that and offer its interpretation of the rename. By default gh-ost does not proceed to execute. This flag tells gh-ost to skip the renamed columns, i.e. to treat what gh-ost thinks are renamed columns as unrelated columns. NOTE: you may lose column data"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "tungsten",
+    "defaultValue": false,
+    "description": "explicitly let gh-ost know that you are running on a tungsten-replication based topology (you are likely to also provide --assume-master-host)"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "discard-foreign-keys",
+    "defaultValue": false,
+    "description": "DANGER! This flag will migrate a table that has foreign keys and will NOT create foreign keys on the ghost table, thus your altered table will have NO foreign keys. This is useful for intentional dropping of foreign keys"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "skip-foreign-key-checks",
+    "defaultValue": false,
+    "description": "set to 'true' when you know for certain there are no foreign keys on your table, and wish to skip the time it takes for gh-ost to verify that"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "skip-strict-mode",
+    "defaultValue": false,
+    "description": "explicitly tell gh-ost binlog applier not to enforce strict sql mode"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "aliyun-rds",
+    "defaultValue": false,
+    "description": "set to 'true' when you execute on Aliyun RDS."
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "gcp",
+    "defaultValue": false,
+    "description": "set to 'true' when you execute on a 1st generation Google Cloud Platform (GCP)."
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "azure",
+    "defaultValue": false,
+    "description": "set to 'true' when you execute on Azure Database on MySQL."
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "execute",
+    "defaultValue": false,
+    "description": "actually execute the alter & migrate the table. Default is noop: do some tests and exit"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "test-on-replica",
+    "defaultValue": false,
+    "description": "Have the migration run on a replica, not on the master. At the end of migration replication is stopped, and tables are swapped and immediately swap-revert. Replication remains stopped and you can compare the two tables for building trust"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "test-on-replica-skip-replica-stop",
+    "defaultValue": false,
+    "description": "When --test-on-replica is enabled, do not issue commands stop replication (requires --test-on-replica)"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "migrate-on-replica",
+    "defaultValue": false,
+    "description": "Have the migration run on a replica, not on the master. This will do the full migration on the replica including cut-over (as opposed to --test-on-replica)"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "ok-to-drop-table",
+    "defaultValue": false,
+    "description": "Shall the tool drop the old table at end of operation. DROPping tables can be a long locking operation, which is why I'm not doing it by default. I'm an online tool, yes?"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "initially-drop-old-table",
+    "defaultValue": false,
+    "description": "Drop a possibly existing OLD table (remains from a previous run?) before beginning operation. Default is to panic and abort if such table exists"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "initially-drop-ghost-table",
+    "defaultValue": false,
+    "description": "Drop a possibly existing Ghost table (remains from a previous run?) before beginning operation. Default is to panic and abort if such table exists"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "timestamp-old-table",
+    "defaultValue": false,
+    "description": "Use a timestamp in old table name. This makes old table names unique and non conflicting cross migrations"
+  },
+  {
+    "kind": "String",
+    "flagKind": "string",
+    "key": "cut-over",
+    "defaultValue": "atomic",
+    "description": "choose cut-over type (default|atomic, two-step)"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "force-named-cut-over",
+    "defaultValue": false,
+    "description": "When true, the 'unpostpone|cut-over' interactive command must name the migrated table"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "force-named-panic",
+    "defaultValue": false,
+    "description": "When true, the 'panic' interactive command must name the migrated table"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "switch-to-rbr",
+    "defaultValue": false,
+    "description": "let this tool automatically switch binary log format to 'ROW' on the replica, if needed. The format will NOT be switched back. I'm too scared to do that, and wish to protect you if you happen to execute another migration while this one is running"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "assume-rbr",
+    "defaultValue": false,
+    "description": "set to 'true' when you know for certain your server uses 'ROW' binlog_format. gh-ost is unable to tell, event after reading binlog_format, whether the replication process does indeed use 'ROW', and restarts replication to be certain RBR setting is applied. Such operation requires SUPER privileges which you might not have. Setting this flag avoids restarting replication and you can proceed to use gh-ost without SUPER privileges"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "cut-over-exponential-backoff",
+    "defaultValue": false,
+    "description": "Wait exponentially longer intervals between failed cut-over attempts. Wait intervals obey a maximum configurable with 'exponential-backoff-max-interval')."
+  },
+  {
+    "kind": "Int64",
+    "flagKind": "number",
+    "key": "exponential-backoff-max-interval",
+    "defaultValue": 64,
+    "description": "Maximum number of seconds to wait between attempts when performing various operations with exponential backoff."
+  },
+  {
+    "kind": "Int64",
+    "flagKind": "number",
+    "key": "chunk-size",
+    "defaultValue": 1000,
+    "description": "amount of rows to handle in each iteration (allowed range: 100-100,000)"
+  },
+  {
+    "kind": "Int64",
+    "flagKind": "number",
+    "key": "dml-batch-size",
+    "defaultValue": 10,
+    "description": "batch size for DML events to apply in a single transaction (range 1-100)"
+  },
+  {
+    "kind": "Int64",
+    "flagKind": "number",
+    "key": "default-retries",
+    "defaultValue": 60,
+    "description": "Default number of retries for various operations before panicking"
+  },
+  {
+    "kind": "Int64",
+    "flagKind": "number",
+    "key": "cut-over-lock-timeout-seconds",
+    "defaultValue": 3,
+    "description": "Max number of seconds to hold locks on tables while attempting to cut-over (retry attempted when lock exceeds timeout)"
+  },
+  {
+    "kind": "Float64",
+    "flagKind": "number",
+    "key": "nice-ratio",
+    "defaultValue": 0,
+    "description": "force being 'nice', imply sleep time per chunk time; range: [0.0..100.0]. Example values: 0 is aggressive. 1: for every 1ms spent copying rows, sleep additional 1ms (effectively doubling runtime); 0.7: for every 10ms spend in a rowcopy chunk, spend 7ms sleeping immediately after"
+  },
+  {
+    "kind": "Int64",
+    "flagKind": "number",
+    "key": "max-lag-millis",
+    "defaultValue": 1500,
+    "description": "replication lag at which to throttle operation"
+  },
+  {
+    "kind": "String",
+    "flagKind": "string",
+    "key": "replication-lag-query",
+    "defaultValue": "",
+    "description": "Deprecated. gh-ost uses an internal, subsecond resolution query"
+  },
+  {
+    "kind": "String",
+    "flagKind": "string",
+    "key": "throttle-control-replicas",
+    "defaultValue": "",
+    "description": "List of replicas on which to check for lag; comma delimited. Example: myhost1.com:3306,myhost2.com,myhost3.com:3307"
+  },
+  {
+    "kind": "String",
+    "flagKind": "string",
+    "key": "throttle-query",
+    "defaultValue": "",
+    "description": "when given, issued (every second) to check if operation should throttle. Expecting to return zero for no-throttle, >0 for throttle. Query is issued on the migrated server. Make sure this query is lightweight"
+  },
+  {
+    "kind": "String",
+    "flagKind": "string",
+    "key": "throttle-http",
+    "defaultValue": "",
+    "description": "when given, gh-ost checks given URL via HEAD request; any response code other than 200 (OK) causes throttling; make sure it has low latency response"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "ignore-http-errors",
+    "defaultValue": false,
+    "description": "ignore HTTP connection errors during throttle check"
+  },
+  {
+    "kind": "Int64",
+    "flagKind": "number",
+    "key": "heartbeat-interval-millis",
+    "defaultValue": 100,
+    "description": "how frequently would gh-ost inject a heartbeat value"
+  },
+  {
+    "kind": "String",
+    "flagKind": "string",
+    "key": "throttle-flag-file",
+    "defaultValue": "",
+    "description": "operation pauses when this file exists; hint: use a file that is specific to the table being altered"
+  },
+  {
+    "kind": "String",
+    "flagKind": "string",
+    "key": "throttle-additional-flag-file",
+    "defaultValue": "/tmp/gh-ost.throttle",
+    "description": "operation pauses when this file exists; hint: keep default, use for throttling multiple gh-ost operations"
+  },
+  {
+    "kind": "String",
+    "flagKind": "string",
+    "key": "postpone-cut-over-flag-file",
+    "defaultValue": "",
+    "description": "while this file exists, migration will postpone the final stage of swapping tables, and will keep on syncing the ghost table. Cut-over/swapping would be ready to perform the moment the file is deleted."
+  },
+  {
+    "kind": "String",
+    "flagKind": "string",
+    "key": "panic-flag-file",
+    "defaultValue": "",
+    "description": "when this file is created, gh-ost will immediately terminate, without cleanup"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "initially-drop-socket-file",
+    "defaultValue": false,
+    "description": "Should gh-ost forcibly delete an existing socket file. Be careful: this might drop the socket file of a running migration!"
+  },
+  {
+    "kind": "String",
+    "flagKind": "string",
+    "key": "serve-socket-file",
+    "defaultValue": "",
+    "description": "Unix socket file to serve on. Default: auto-determined and advertised upon startup"
+  },
+  {
+    "kind": "Int64",
+    "flagKind": "number",
+    "key": "serve-tcp-port",
+    "defaultValue": 0,
+    "description": "TCP port to serve on. Default: disabled"
+  },
+  {
+    "kind": "String",
+    "flagKind": "string",
+    "key": "hooks-path",
+    "defaultValue": "",
+    "description": "directory where hook files are found (default: empty, ie. hooks disabled). Hook files found on this path, and conforming to hook naming conventions will be executed"
+  },
+  {
+    "kind": "String",
+    "flagKind": "string",
+    "key": "hooks-hint",
+    "defaultValue": "",
+    "description": "arbitrary message to be injected to hooks via GH_OST_HOOKS_HINT, for your convenience"
+  },
+  {
+    "kind": "String",
+    "flagKind": "string",
+    "key": "hooks-hint-owner",
+    "defaultValue": "",
+    "description": "arbitrary name of owner to be injected to hooks via GH_OST_HOOKS_HINT_OWNER, for your convenience"
+  },
+  {
+    "kind": "String",
+    "flagKind": "string",
+    "key": "hooks-hint-token",
+    "defaultValue": "",
+    "description": "arbitrary token to be injected to hooks via GH_OST_HOOKS_HINT_TOKEN, for your convenience"
+  },
+  {
+    "kind": "Uint",
+    "flagKind": "number",
+    "key": "replica-server-id",
+    "defaultValue": 99999,
+    "description": "server id used by gh-ost process. Default: 99999"
+  },
+  {
+    "kind": "String",
+    "flagKind": "string",
+    "key": "max-load",
+    "defaultValue": "",
+    "description": "Comma delimited status-name=threshold. e.g: 'Threads_running=100,Threads_connected=500'. When status exceeds threshold, app throttles writes"
+  },
+  {
+    "kind": "String",
+    "flagKind": "string",
+    "key": "critical-load",
+    "defaultValue": "",
+    "description": "Comma delimited status-name=threshold, same format as --max-load. When status exceeds threshold, app panics and quits"
+  },
+  {
+    "kind": "Int64",
+    "flagKind": "number",
+    "key": "critical-load-interval-millis",
+    "defaultValue": 0,
+    "description": "When 0, migration immediately bails out upon meeting critical-load. When non-zero, a second check is done after given interval, and migration only bails out if 2nd check still meets critical load"
+  },
+  {
+    "kind": "Int64",
+    "flagKind": "number",
+    "key": "critical-load-hibernate-seconds",
+    "defaultValue": 0,
+    "description": "When nonzero, critical-load does not panic and bail out; instead, gh-ost goes into hibernate for the specified duration. It will not read/write anything to from/to any server"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "quiet",
+    "defaultValue": false,
+    "description": "quiet"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "verbose",
+    "defaultValue": false,
+    "description": "verbose"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "debug",
+    "defaultValue": false,
+    "description": "debug mode (very verbose)"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "stack",
+    "defaultValue": false,
+    "description": "add stack trace upon error"
+  },
+  {
+    "kind": "Bool",
+    "flagKind": "boolean",
+    "key": "check-flag",
+    "defaultValue": false,
+    "description": "Check if another flag exists/supported. This allows for cross-version scripting. Exits with 0 when all additional provided flags exist, nonzero otherwise. You must provide (dummy) values for flags that require a value. Example: gh-ost --check-flag --cut-over-lock-timeout-seconds --nice-ratio 0"
+  },
+  {
+    "kind": "String",
+    "flagKind": "string",
+    "key": "force-table-names",
+    "defaultValue": "",
+    "description": "table name prefix to be used on the temporary tables"
+  }
+]

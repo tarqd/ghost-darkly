@@ -1,0 +1,13 @@
+---
+version: '3'
+services:
+  primary: 
+    image: arm64v8/mysql 
+    environment: 
+      - MYSQL_ROOT_PASSWORD=mysql
+    ports:
+      - 3306:3306
+    volumes:
+      - ./example/primary/my.cnf:/etc/mysql/mysql.conf.d/my.cnf
+      - ./example/primary/init.d:/docker-entrypoint-initdb.d
+      - ./data/links.csv:/var/lib/mysql-files/links.csv

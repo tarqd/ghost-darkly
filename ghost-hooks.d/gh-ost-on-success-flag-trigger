@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [[ "$GH_OST_DRY_RUN" == "false" ]]; then
+    curl "$GHOST_SUCCESS_URL" -H "Content-Type: content/json" -d '{ "eventName": "ghost migration completed '"$GH_OST_HOOKS_HINT ($GH_OST_DATABASE_NAME.$GH_OST_TABLE_NAME)"'. DDL: '"$GH_OST_DDL"'","url": "https://example.com"}' 
+  else 
+    echo "dry run: " curl $GHOST_SUCCESS_URL
+fi

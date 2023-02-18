@@ -1,0 +1,8 @@
+#!/bin/bash
+
+
+env | grep 'GH_OST_'
+
+nohup node ./ghost-darklyd --socket=$GHOST_SOCK --sdk-key=$LD_SDK_KEY --postpone-flag-file=$POSTPONE_FLAG --pid-file=$PIDFILE --flag-prefix="ghost" 0<&- &> $LOGFILE &
+
+echo "Starting LaunchDarkly configuration daemon. Logs: $LOGFILE"
